@@ -1,7 +1,11 @@
+import { Redirect } from "expo-router";
+import { useState } from "react";
 import { Text, View } from "react-native";
 
 export default function Index() {
-  return (
+  const [user, setUser] = useState(null);
+
+  return user ? (
     <View
       style={{
         flex: 1,
@@ -11,5 +15,7 @@ export default function Index() {
     >
       <Text>Edit app/index.tsx to edit this screens.</Text>
     </View>
+  ) : (
+    <Redirect href={"/(auth)/completeProfile"} />
   );
 }
