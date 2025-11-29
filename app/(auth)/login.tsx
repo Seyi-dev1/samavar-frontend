@@ -1,5 +1,6 @@
 import { countries } from "@/assets/data/coutriesData";
-import { sendVerificationCode, verifyCode } from "@/requests";
+import { useTempUserContext } from "@/context/tempUserContext";
+import { authenticateUser, sendVerificationCode } from "@/requests";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { CountryCode, parsePhoneNumberFromString } from "libphonenumber-js";
@@ -26,6 +27,7 @@ export type Country = {
 };
 
 const Login = () => {
+  const { tempUser, updateTempUser } = useTempUserContext();
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     name: "Nigeria",
     dial_code: "234",
@@ -80,7 +82,7 @@ const Login = () => {
       }
       const response = await sendVerificationCode(phoneNumberText);
       console.log("Response from sendVerificationCode:", response.data);
-      if (response.data?.status === "pending") {
+      if (response.data.status === "pending") {
         setPhase("verify");
       }
       setLoading(false);
@@ -139,9 +141,13 @@ const Login = () => {
       return;
     }
     try {
-      const response = await verifyCode(phoneNumberText!, verificationCode);
+      const response = await authenticateUser(
+        phoneNumberText!,
+        verificationCode
+      );
       console.log("Response from verifyCode:", response.data);
       setLoading(false);
+      updateTempUser(response.data);
       router.push("/(auth)/completeProfile");
     } catch (error) {
       setLoading(false);
@@ -283,6 +289,14 @@ const Login = () => {
         <Text style={styles.header}>Verify Code</Text>
         <Text style={styles.description}>
           Please enter the verification we sent to your phone number below.
+        </Text>
+        <Text
+          style={[styles.description, { color: "#a5a4a4ff", fontSize: 13 }]}
+        >
+          While Samavar is still in test mode, we cant afford to send actual
+          text messages. So please use{" "}
+          <Text style={{ color: "#4cb74cff", fontWeight: 600 }}>"123456"</Text>{" "}
+          as the default verification code.
         </Text>
         <View style={styles.formForCode}>
           <View style={styles.inputsContainer}>

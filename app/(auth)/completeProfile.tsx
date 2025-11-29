@@ -1,10 +1,12 @@
 import { avatars } from "@/assets/avatars/avatars";
-import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
+import { useTempUserContext } from "@/context/tempUserContext";
+import { httpUpdaterUser } from "@/requests";
+import { Feather, Octicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -21,26 +23,42 @@ export type Names = {
 };
 
 const CompleteProfile = () => {
+  const { tempUser, updateTempUser } = useTempUserContext();
+  console.log(tempUser);
   const [loading, setLoading] = useState(false);
-  const [names, setNames] = useState<Names>({
-    firstName: "",
-    lastName: "",
-  });
-
-  const [selectPictureModal, setSelectPictureModal] = useState(false);
-
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const onChangeFirstName = (text: string) => {
-    setNames((prev) => {
-      return { ...prev, firstName: text };
-    });
+    const cleanedText = text.replace(/\s+/g, "");
+    updateTempUser({ firstName: cleanedText });
   };
 
   const onChangeLastName = (text: string) => {
-    setNames((prev) => {
-      return { ...prev, lastName: text };
-    });
+    const cleanedText = text.replace(/\s+/g, "");
+    updateTempUser({ lastName: cleanedText });
+  };
+
+  const updateUser = async () => {
+    try {
+      if (!tempUser.phoneNumber || !tempUser.firstName || !tempUser.lastName) {
+        alert("please fill empty fields");
+        return;
+      }
+      const response = await httpUpdaterUser({
+        phoneNumber: tempUser.phoneNumber,
+        firstName: tempUser.firstName,
+        lastName: tempUser.lastName,
+        profilePhoto: tempUser.profilePhoto,
+        avatarIndex: tempUser.avatarIndex,
+      });
+
+      console.log(response?.data);
+    } catch (error) {
+      setLoading(false);
+      alert("An error occurred while signing up user.");
+      console.error("Error in registration:", error);
+      return;
+    }
+    setLoading(false);
   };
 
   return (
@@ -51,32 +69,66 @@ const CompleteProfile = () => {
           Profiles are visible to people you message, contacts and groups.
         </Text>
         <View style={styles.profile}>
-          <View style={styles.image}>
-            <Octicons
-              name="person"
-              size={30}
-              color={"#8c2dcbff"}
-              style={{ fontWeight: 200 }}
-            />
+          <View
+            style={[
+              styles.image,
+              {
+                padding:
+                  (tempUser.avatarIndex !== undefined &&
+                    tempUser.avatarIndex !== null &&
+                    tempUser.avatarIndex >= 0) ||
+                  tempUser.profilePhoto
+                    ? 0
+                    : 27,
+              },
+            ]}
+          >
+            {(tempUser.avatarIndex !== undefined &&
+              tempUser.avatarIndex !== null &&
+              tempUser.avatarIndex >= 0) ||
+            tempUser.profilePhoto ? (
+              <Image
+                style={{ width: 80, height: 80, borderRadius: 40 }}
+                source={
+                  tempUser.avatarIndex !== undefined &&
+                  tempUser.avatarIndex !== null &&
+                  tempUser.avatarIndex >= 0
+                    ? avatars[tempUser.avatarIndex]
+                    : { uri: tempUser.profilePhoto }
+                }
+              />
+            ) : (
+              <Octicons
+                name="person"
+                size={30}
+                color={"#5b9babff"}
+                style={{ fontWeight: 200 }}
+              />
+            )}
+
             <TouchableOpacity
-              onPress={() => setSelectPictureModal(true)}
+              onPress={() => router.push("/(auth)/selectImage")}
               style={styles.camera}
             >
               <Feather name="camera" size={18} color={"#000"} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.name}>Samuel Oluwaseyi</Text>
+          <Text style={styles.name}>
+            {tempUser.firstName && tempUser.firstName}
+            <Text> </Text>
+            {tempUser.lastName && tempUser.lastName}
+          </Text>
         </View>
         <View style={styles.names}>
           <TextInput
             style={styles.nameInput}
-            value={names.firstName}
+            value={tempUser.firstName}
             onChangeText={onChangeFirstName}
             placeholder="First name"
           />
           <TextInput
             style={styles.nameInput}
-            value={names.lastName}
+            value={tempUser.lastName}
             onChangeText={onChangeLastName}
             placeholder="Last name"
           />
@@ -85,6 +137,7 @@ const CompleteProfile = () => {
       <View>
         <TouchableOpacity
           style={[styles.continueButton, { paddingVertical: loading ? 5 : 15 }]}
+          onPress={updateUser}
         >
           {loading ? (
             <ActivityIndicator size={38} color={"#fff"} />
@@ -93,124 +146,6 @@ const CompleteProfile = () => {
           )}
         </TouchableOpacity>
       </View>
-      {selectPictureModal && (
-        <View style={styles.selectPictureModal}>
-          <View>
-            <AntDesign
-              style={{ marginLeft: 25 }}
-              name="close"
-              size={22}
-              color={"#2a2a2aff"}
-              onPress={() => setSelectPictureModal(false)}
-            />
-            <View style={{ alignItems: "center", marginTop: 20 }}>
-              {selectedImage === null ? (
-                <View style={styles.noImage}>
-                  <Octicons
-                    name="person"
-                    size={35}
-                    color={"#8c2dcbff"}
-                    style={{ fontWeight: 200 }}
-                  />
-                </View>
-              ) : (
-                <View style={styles.selectedImage}>
-                  <Image
-                    style={{ width: 150, height: 150 }}
-                    source={avatars[selectedImage]}
-                  />
-                  <TouchableOpacity
-                    onPress={() => setSelectedImage(null)}
-                    style={styles.removeImage}
-                  >
-                    <AntDesign name="close" size={16} color={"#000"} />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-            <View style={styles.selectOptions}>
-              <TouchableOpacity style={{ alignItems: "center", gap: 10 }}>
-                <View style={styles.selectOption}>
-                  <Feather
-                    name="camera"
-                    size={23}
-                    color={"#1a1a1bff"}
-                    style={{ fontWeight: 200 }}
-                  />
-                </View>
-                <Text>Camera</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ alignItems: "center", gap: 10 }}>
-                <View style={styles.selectOption}>
-                  <Ionicons
-                    name="image"
-                    size={23}
-                    color={"#1b1a1cff"}
-                    style={{ fontWeight: 200 }}
-                  />
-                </View>
-                <Text>Photo</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{ alignItems: "center", gap: 10 }}>
-                <View style={styles.selectOption}>
-                  <Ionicons
-                    name="text"
-                    size={23}
-                    color={"#191819ff"}
-                    style={{ fontWeight: 200 }}
-                  />
-                </View>
-                <Text>Text</Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{ backgroundColor: "#dfdfdfff", height: 1, marginTop: 20 }}
-            ></View>
-            <View>
-              <FlatList
-                data={avatars}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity onPress={() => setSelectedImage(index)}>
-                      <Image source={item} style={{ width: 70, height: 70 }} />
-                    </TouchableOpacity>
-                  );
-                }}
-                keyExtractor={(item) => item}
-                numColumns={4}
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  marginTop: 40,
-                }}
-                columnWrapperStyle={{
-                  justifyContent: "space-between",
-                  gap: 20,
-                }}
-                ItemSeparatorComponent={() => (
-                  <View style={{ height: 30 }}></View>
-                )}
-              />
-            </View>
-          </View>
-
-          <View style={{ paddingHorizontal: 16 }}>
-            <TouchableOpacity
-              style={[
-                styles.continueButton,
-                { paddingVertical: loading ? 5 : 15 },
-              ]}
-            >
-              {loading ? (
-                <ActivityIndicator size={38} color={"#fff"} />
-              ) : (
-                <Text>Save</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
     </View>
   );
 };
@@ -250,8 +185,7 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    backgroundColor: "#e2e1fbff",
-    padding: 20,
+    backgroundColor: "#d2e9f7ff",
     borderRadius: "50%",
   },
 

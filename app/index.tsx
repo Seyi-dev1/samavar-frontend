@@ -16,6 +16,6 @@ export default function Index() {
       <Text>Edit app/index.tsx to edit this screens.</Text>
     </View>
   ) : (
-    <Redirect href={"/(auth)/completeProfile"} />
+    <Redirect href={"/(auth)/onboarding"} />
   );
 }
