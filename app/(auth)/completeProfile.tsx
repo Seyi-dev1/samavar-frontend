@@ -1,5 +1,6 @@
 import { avatars } from "@/assets/avatars/avatars";
 import { useTempUserContext } from "@/context/tempUserContext";
+import { useUserContext } from "@/context/userContext";
 import { httpUpdaterUser } from "@/requests";
 import { Feather, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -24,6 +25,7 @@ export type Names = {
 
 const CompleteProfile = () => {
   const { tempUser, updateTempUser } = useTempUserContext();
+  const {user, updateUser} = useUserContext();
   console.log(tempUser);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +39,7 @@ const CompleteProfile = () => {
     updateTempUser({ lastName: cleanedText });
   };
 
-  const updateUser = async () => {
+  const updateNewUser = async () => {
     try {
       if (!tempUser.phoneNumber || !tempUser.firstName || !tempUser.lastName) {
         alert("please fill empty fields");
@@ -51,7 +53,15 @@ const CompleteProfile = () => {
         avatarIndex: tempUser.avatarIndex,
       });
 
-      console.log(response?.data);
+      console.log('updated User',response?.data);
+      updateUser({
+        firstName:response?.data.firstName,
+        lastName:response?.data.lastName,
+        profilePhoto:response?.data.profilePhoto,
+        avatarIndex:response?.data.avatarIndex,
+        phoneNumber:response?.data.phone,
+      })
+      router.replace('/(home)/(tabs)/chats')
     } catch (error) {
       setLoading(false);
       alert("An error occurred while signing up user.");
@@ -74,27 +84,27 @@ const CompleteProfile = () => {
               styles.image,
               {
                 padding:
-                  (tempUser.avatarIndex !== undefined &&
-                    tempUser.avatarIndex !== null &&
-                    tempUser.avatarIndex >= 0) ||
-                  tempUser.profilePhoto
+                  (user?.avatarIndex !== undefined &&
+                    user?.avatarIndex !== null &&
+                    user?.avatarIndex >= 0) ||
+                  user?.profilePhoto
                     ? 0
                     : 27,
               },
             ]}
           >
-            {(tempUser.avatarIndex !== undefined &&
-              tempUser.avatarIndex !== null &&
-              tempUser.avatarIndex >= 0) ||
-            tempUser.profilePhoto ? (
+            {(user?.avatarIndex !== undefined &&
+              user?.avatarIndex !== null &&
+              user.avatarIndex >= 0) ||
+            user?.profilePhoto ? (
               <Image
                 style={{ width: 80, height: 80, borderRadius: 40 }}
                 source={
-                  tempUser.avatarIndex !== undefined &&
-                  tempUser.avatarIndex !== null &&
-                  tempUser.avatarIndex >= 0
-                    ? avatars[tempUser.avatarIndex]
-                    : { uri: tempUser.profilePhoto }
+                  user.avatarIndex !== undefined &&
+                  user.avatarIndex !== null &&
+                  user.avatarIndex >= 0
+                    ? avatars[user.avatarIndex]
+                    : { uri: user.profilePhoto }
                 }
               />
             ) : (
@@ -137,7 +147,7 @@ const CompleteProfile = () => {
       <View>
         <TouchableOpacity
           style={[styles.continueButton, { paddingVertical: loading ? 5 : 15 }]}
-          onPress={updateUser}
+          onPress={updateNewUser}
         >
           {loading ? (
             <ActivityIndicator size={38} color={"#fff"} />

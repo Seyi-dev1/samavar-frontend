@@ -1,4 +1,4 @@
-const API_URL = "http://10.220.197.186:3000";
+const API_URL = "http://10.114.25.87:3000";
 import axios from "axios";
 
 export const sendVerificationCode = async (phoneNumber: string) => {
@@ -40,8 +40,8 @@ export const httpUpdaterUser = async ({
   phoneNumber: string;
   firstName?: string;
   lastName?: string;
-  profilePhoto?: string;
-  avatarIndex?: number;
+  profilePhoto?: string | null;
+  avatarIndex?: number | null;
 }) => {
   try {
     if (profilePhoto) {

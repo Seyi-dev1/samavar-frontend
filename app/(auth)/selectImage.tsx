@@ -1,5 +1,6 @@
 import { avatars } from "@/assets/avatars/avatars";
 import { useTempUserContext } from "@/context/tempUserContext";
+import { useUserContext } from "@/context/userContext";
 import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -13,34 +14,45 @@ import {
 } from "react-native";
 
 const SelectImage = () => {
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const { tempUser, updateTempUser } = useTempUserContext();
-
   console.log(tempUser);
+  const {user, updateUser} = useUserContext();
   const [loading, setLoading] = useState(false);
 
   return (
     <View style={styles.selectPictureModal}>
+      <AntDesign onPress={()=>{
+        // updateTempUser({avatarIndex: user?.avatarIndex, profilePhoto: user?.profilePhoto})
+        router.replace('/(auth)/completeProfile')
+      }
+        
+        } name="close" size={22} color={"#000"} style={{paddingLeft:20}} />
       <View>
         <View style={{ alignItems: "center", marginTop: 20 }}>
-          {(tempUser.avatarIndex !== undefined && tempUser.avatarIndex >= 0) ||
+          {(tempUser.avatarIndex !== undefined && tempUser.avatarIndex !==null && tempUser.avatarIndex >= 0) ||
           tempUser.profilePhoto ? (
             <View style={styles.selectedImage}>
               <Image
                 style={{ width: 150, height: 150, borderRadius: 75 }}
                 source={
-                  tempUser.avatarIndex !== undefined &&
+                  tempUser.avatarIndex !== null && tempUser.avatarIndex !== undefined &&
                   tempUser.avatarIndex >= 0
                     ? avatars[tempUser.avatarIndex]
                     : { uri: tempUser.profilePhoto }
                 }
               />
               <TouchableOpacity
-                onPress={() =>
+                onPress={() =>{
                   updateTempUser({
-                    avatarIndex: undefined,
-                    profilePhoto: undefined,
+                    avatarIndex: null,
+                    profilePhoto: null,
                   })
+                  updateUser({
+                    avatarIndex: null,
+                    profilePhoto: null,
+                  })
+                }
+                  
                 }
                 style={styles.removeImage}
               >
@@ -146,7 +158,10 @@ const SelectImage = () => {
 
       <View style={{ paddingHorizontal: 16 }}>
         <TouchableOpacity
-          onPress={() => router.replace("/(auth)/completeProfile")}
+          onPress={() => {
+            updateUser({profilePhoto: tempUser.profilePhoto, avatarIndex:tempUser.avatarIndex})
+            router.replace("/(auth)/completeProfile")
+          }}
           style={[styles.continueButton, { paddingVertical: loading ? 5 : 15 }]}
         >
           <Text>Save</Text>

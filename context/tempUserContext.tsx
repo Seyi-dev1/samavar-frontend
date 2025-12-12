@@ -4,8 +4,8 @@ export type TemporaryUser = {
   phoneNumber?: string;
   firstName?: string;
   lastName?: string;
-  profilePhoto?: string;
-  avatarIndex?: number;
+  profilePhoto?: string | null;
+  avatarIndex?: number | null;
 };
 
 export type TemporaryUserContextType = {

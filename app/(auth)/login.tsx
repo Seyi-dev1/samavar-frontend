@@ -1,5 +1,6 @@
 import { countries } from "@/assets/data/coutriesData";
 import { useTempUserContext } from "@/context/tempUserContext";
+import { useUserContext } from "@/context/userContext";
 import { authenticateUser, sendVerificationCode } from "@/requests";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -28,6 +29,7 @@ export type Country = {
 
 const Login = () => {
   const { tempUser, updateTempUser } = useTempUserContext();
+  const {user, setUser} = useUserContext();
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     name: "Nigeria",
     dial_code: "234",
@@ -148,6 +150,7 @@ const Login = () => {
       console.log("Response from verifyCode:", response.data);
       setLoading(false);
       updateTempUser(response.data);
+      setUser(response.data);
       router.push("/(auth)/completeProfile");
     } catch (error) {
       setLoading(false);
@@ -291,7 +294,7 @@ const Login = () => {
           Please enter the verification we sent to your phone number below.
         </Text>
         <Text
-          style={[styles.description, { color: "#a5a4a4ff", fontSize: 13 }]}
+          style={[styles.description, { color: "#908e8eff", fontSize: 13 }]}
         >
           While Samavar is still in test mode, we cant afford to send actual
           text messages. So please use{" "}
