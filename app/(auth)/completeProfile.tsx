@@ -40,6 +40,7 @@ const CompleteProfile = () => {
   };
 
   const updateNewUser = async () => {
+    setLoading(true)
     try {
       if (!tempUser.phoneNumber || !tempUser.firstName || !tempUser.lastName) {
         alert("please fill empty fields");

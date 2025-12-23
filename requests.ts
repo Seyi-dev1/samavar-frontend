@@ -1,4 +1,4 @@
-const API_URL = "http://10.114.25.87:3000";
+const API_URL = "http://10.145.52.87:3000";
 import axios from "axios";
 
 export const sendVerificationCode = async (phoneNumber: string) => {

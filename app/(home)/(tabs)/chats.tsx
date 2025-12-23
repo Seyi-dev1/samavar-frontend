@@ -1,12 +1,33 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useRef } from 'react';
+import { Animated, Pressable, StyleSheet } from 'react-native';
 
 const Chats = () => {
+  const scale = useRef(new Animated.Value(1)).current;
+
   return (
-    <View>
-      <Text>Chats</Text>
-    </View>
-  )
+    <Pressable
+      onPress={() => {
+        Animated.spring(scale, {
+          toValue: 1.2,
+          useNativeDriver: true,
+        }).start(() =>
+          Animated.spring(scale, {
+            toValue: 1,
+            useNativeDriver: true,
+          }).start()
+        );
+      }}
+    >
+      <Animated.View
+        style={{
+          width: 100,
+          height: 100,
+          backgroundColor: "red",
+          transform: [{ scale }],
+        }}
+      />
+    </Pressable>
+  );
 }
 
 export default Chats

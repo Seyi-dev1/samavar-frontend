@@ -1,6 +1,6 @@
 import TempUserProvider from "@/context/tempUserContext";
 import UserProvider from "@/context/userContext";
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,22 +13,14 @@ export default function RootLayout() {
         <SafeAreaView
           style={{
             flex: 1,
-            // backgroundColor: colorScheme === "dark" ? "#1c1c1cff" : "#fff",
+            backgroundColor:"#fff"
           }}
-          edges={["top"]}
+          edges={["top", "left", "right"]}
         >
           <StatusBar
-            style={colorScheme === "dark" ? "light" : "dark"}
-            backgroundColor={"red"}
+            style="auto"
           />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: {
-                backgroundColor: colorScheme === "dark" ? "#1c1c1cff" : "#fff",
-              },
-            }}
-          ></Stack>
+          <Slot/>
         </SafeAreaView>
       </TempUserProvider>
     </UserProvider>
