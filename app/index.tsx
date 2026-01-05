@@ -1,11 +1,11 @@
+import { useUserContext } from "@/context/userContext";
 import { Redirect } from "expo-router";
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
-  const [user, setUser] = useState(null);
+  const {loading, user} = useUserContext()
 
-  return user ? (
+  return loading? (
     <View
       style={{
         flex: 1,
@@ -13,9 +13,10 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screens.</Text>
+      <ActivityIndicator size={30} color={"#7f72f5ff"}/>
     </View>
-  ) : (
-    <Redirect href={"/(auth)/onboarding"} />
-  );
+  ): user? <Redirect href={'/(home)/(tabs)/chats'}/>:
+  <Redirect href={'/(auth)/onboarding'}/>
+  
+  
 }

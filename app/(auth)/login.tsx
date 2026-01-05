@@ -234,7 +234,7 @@ const Login = () => {
           {loading ? (
             <ActivityIndicator size={38} color={"#fff"} />
           ) : (
-            <Text>Continue</Text>
+            <Text style={{color:'#fff', fontWeight:700}}>Continue</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -334,7 +334,7 @@ const Login = () => {
           {loading ? (
             <ActivityIndicator size={38} color={"#fff"} />
           ) : (
-            <Text>Continue</Text>
+            <Text style={{color:"#fff", fontWeight:700}}>Continue</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   continueButton: {
-    backgroundColor: "#93b5d1ff",
+    backgroundColor: "#7f72f5ff",
     paddingHorizontal: 140,
     borderRadius: 30,
   },

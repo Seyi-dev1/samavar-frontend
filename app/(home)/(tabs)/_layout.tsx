@@ -8,8 +8,8 @@ import { StyleSheet, View } from "react-native";
 
 const HomeLayout2 = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-       <Tabs  tabBar={(props)=> <MyTabBar {...props}/>}>
+    <View style={{ flex: 1,  }}>
+       <Tabs screenOptions={{sceneStyle:{backgroundColor:"#ffffffff", paddingHorizontal:20}}}  tabBar={(props)=> <MyTabBar {...props}/>}>
       <Tabs.Screen
         name= 'chats'
         options={{

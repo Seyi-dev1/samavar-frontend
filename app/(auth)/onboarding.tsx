@@ -46,7 +46,7 @@ const Onboarding = () => {
         onPress={() => router.push("/(auth)/login")}
         style={styles.continueButton}
       >
-        <Text>Continue</Text>
+        <Text style={{color:"#fff", fontWeight:700}}>Continue</Text>
       </TouchableOpacity>
     </View>
   );
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   continueButton: {
-    backgroundColor: "#93b5d1ff",
+    backgroundColor: "#7f72f5ff",
     paddingVertical: 15,
     paddingHorizontal: 140,
     borderRadius: 30,

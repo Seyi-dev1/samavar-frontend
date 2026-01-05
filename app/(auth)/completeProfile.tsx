@@ -25,7 +25,7 @@ export type Names = {
 
 const CompleteProfile = () => {
   const { tempUser, updateTempUser } = useTempUserContext();
-  const {user, updateUser} = useUserContext();
+  const {user, setUser} = useUserContext();
   console.log(tempUser);
   const [loading, setLoading] = useState(false);
 
@@ -55,12 +55,12 @@ const CompleteProfile = () => {
       });
 
       console.log('updated User',response?.data);
-      updateUser({
+      setUser({
         firstName:response?.data.firstName,
         lastName:response?.data.lastName,
         profilePhoto:response?.data.profilePhoto,
         avatarIndex:response?.data.avatarIndex,
-        phoneNumber:response?.data.phone,
+        phoneNumber:response?.data.phoneNumber,
       })
       router.replace('/(home)/(tabs)/chats')
     } catch (error) {
@@ -153,7 +153,7 @@ const CompleteProfile = () => {
           {loading ? (
             <ActivityIndicator size={38} color={"#fff"} />
           ) : (
-            <Text>Save</Text>
+            <Text style={{color:"#fff", fontWeight:700}}>Save</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   continueButton: {
-    backgroundColor: "#93b5d1ff",
+    backgroundColor: "#7f72f5ff",
     paddingHorizontal: 140,
     borderRadius: 30,
     alignItems: "center",
