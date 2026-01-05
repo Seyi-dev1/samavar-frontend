@@ -12,19 +12,13 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const Chats = () => {
 
   const {user} = useUserContext()
-  // console.log(user)
-
   const {userChats, activeChat} = useChatsContext();
-
   const [UIChats, setUIChats] = React.useState<any>([]);
-  // console.log('UIChats', UIChats)
 
-  // console.log(`chats in chats tab${user?.firstName}`, userChats)
- 
+  
   useEffect(()=> {
     const fetchUIChats = async () => {
       const result = await httpGetChatsForUI()
-      // console.log('chats for UI', result)
       //  Render instantly from local DB
       setUIChats(result);
 

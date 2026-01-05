@@ -55,7 +55,6 @@ export const ChatsContext = createContext<ChatContextType | undefined>(undefined
         .where(eq(chats.id, chatId));
 
        await AsyncStorage.setItem('lastSyncedAt', new Date().toISOString());
-       console.log('sync time updated after message sent');
 
         fetchChats();
         })  
@@ -120,16 +119,7 @@ export const ChatsContext = createContext<ChatContextType | undefined>(undefined
               unreadCount: 0,
               lastMessageStatus: 'seen'
             })
-            .where(eq(chats.id, payload.chatId));
-
-            const updatedChat = await db
-            .select()
-            .from(chats)
-            .where(eq(chats.id, payload.chatId))
-            .limit(1);
-            
-            const chatToreturn = updatedChat[0];
-            console.log('chat lastMessageStatus updated to seen for chat', chatToreturn);
+            .where(eq(chats.id, payload.chatId)); 
         }
         
         // update messages status to seen
@@ -139,7 +129,6 @@ export const ChatsContext = createContext<ChatContextType | undefined>(undefined
           .where(eq(messages.chatId, payload.chatId))
 
           await AsyncStorage.setItem('lastSyncedAt', new Date().toISOString());
-          console.log('sync time updated after messages seen');
 
           fetchChats();
     })

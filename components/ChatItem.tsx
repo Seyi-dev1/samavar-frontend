@@ -14,7 +14,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const ChatItem = ({firstName, avatarIndex, profilePhoto, partcipantId, lastMessage, chatId, lastMessageAt, lastMessageStatus, lastMessageSenderId, unreadCount}:{firstName:string, avatarIndex:number, profilePhoto:string, lastMessage:string, partcipantId:string, chatId:string, lastMessageAt:string, lastMessageStatus:string, lastMessageSenderId:string, unreadCount:number}) => {
 
-  const {setActiveChat, userChats} = useChatsContext()
+  const {setActiveChat} = useChatsContext()
   const {user} = useUserContext()
   
     

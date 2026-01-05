@@ -13,11 +13,10 @@ import { socket } from '../_layout'
 const ChatPage = () => {
     const [chatMessages, setChatMessages] = useState<string[]>([])
     const [newMessage, setNewMessage] = useState<string | undefined>(undefined)
-    // console.log('newMessage', newMessage);
     const {activeChat, setActiveChat} = useChatsContext()
-    // console.log('activeChat in chat page', activeChat)
     const {user} = useUserContext()
-    // console.log('user in chat page', user)
+  
+    // send a message
     const sendMessage = async () => {
     if (!newMessage) return;
     const date = new Date().toISOString();
